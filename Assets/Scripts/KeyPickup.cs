@@ -5,7 +5,7 @@ public class KeyPickup : MonoBehaviour
     public enum KeyType { Red, Green, Blue, Yellow, Purple }
 
     public KeyType keyType;
-    [SerializeField] private AudioSource sfx; // opcional
+    [SerializeField] private AudioSource sfx;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -14,6 +14,6 @@ public class KeyPickup : MonoBehaviour
 
         inv.AddKey(keyType);
         if (sfx) sfx.Play();
-        Destroy(gameObject); // o desactiva si quieres VFX antes
+        Destroy(gameObject);
     }
 }
