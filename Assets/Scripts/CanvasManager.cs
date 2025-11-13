@@ -9,9 +9,9 @@ public class CanvasManager : MonoBehaviour
     [SerializeField] private GameObject player;
     [SerializeField] private LoseOrWinScript loseOrWin;
 
-    [Header("Timer")]
-    [SerializeField] private TextMeshProUGUI timerText;
-    [SerializeField] private int gameTimeInSeconds = 300;
+    //[Header("Timer")]
+    //[SerializeField] private TextMeshProUGUI timerText;
+    //[SerializeField] private int gameTimeInSeconds = 300;
 
     [Header("Events")]
     public UnityEvent OnTimeUp;
@@ -23,13 +23,11 @@ public class CanvasManager : MonoBehaviour
 
     private void Start()
     {
-        Time.timeScale = 0f;
 
         playerManager = player.GetComponent<PlayerManager>();
         playerManager.gameObject.SetActive(false);
 
-        _remaining = Mathf.Max(0, gameTimeInSeconds);
-        UpdateTimerText();
+ 
     }
 
     private void Update()
@@ -41,7 +39,7 @@ public class CanvasManager : MonoBehaviour
         if (_remaining <= 0f)
         {
             _remaining = 0f;
-            UpdateTimerText();
+            //UpdateTimerText();
 
             if (!_ended)
             {
@@ -56,16 +54,16 @@ public class CanvasManager : MonoBehaviour
             return;
         }
 
-        UpdateTimerText();
+        //UpdateTimerText();
     }
 
-    private void UpdateTimerText()
+    /*private void UpdateTimerText()
     {
         int total = Mathf.CeilToInt(_remaining);
         int minutes = total / 60;
         int seconds = total % 60;
         timerText.text = $"{minutes}:{seconds:00}";
-    }
+    }*/
 
     public void StartGame()
     {
@@ -88,7 +86,7 @@ public class CanvasManager : MonoBehaviour
         Time.timeScale = 1f;
     }
 
-    public void ResetTimer(int newTimeSeconds = -1)
+    /*public void ResetTimer(int newTimeSeconds = -1)
     {
         if (newTimeSeconds > -1) gameTimeInSeconds = newTimeSeconds;
 
@@ -100,5 +98,5 @@ public class CanvasManager : MonoBehaviour
         playerManager.gameObject.SetActive(false);
 
         UpdateTimerText();
-    }
+    }*/
 }
