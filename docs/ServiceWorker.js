@@ -1,9 +1,9 @@
 const cacheName = "Grupo_Casco-Casco_Interactivo_Final_Visualización-0.1.0";
 const contentToCache = [
     "Build/docs.loader.js",
-    "Build/docs.framework.js.gz",
-    "Build/docs.data.gz",
-    "Build/docs.wasm.gz",
+    "Build/docs.framework.js.br",
+    "Build/docs.data.br",
+    "Build/docs.wasm.br",
     "TemplateData/style.css"
 
 ];
