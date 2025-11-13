@@ -6,6 +6,8 @@ public class FrameTrigger : MonoBehaviour
     [Tooltip("Referencia al manager que controla qué cuadro está activo")]
     [SerializeField] private RandomFrameManager manager;
 
+    [SerializeField] private string playerTag = "Player";
+
     private void Start()
     {
         // Aseguramos que sea trigger
@@ -15,14 +17,16 @@ public class FrameTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // Solo reaccionar si lo que entra tiene Rigidbody (player u otro)
-        if (other.attachedRigidbody == null)
+        // Asegúrate de que es el player
+        if (!string.IsNullOrEmpty(playerTag) && !other.CompareTag(playerTag))
             return;
 
-        if (manager == null)
-            return;
+        // Con el Rigidbody kinemático en el Player, OnTriggerEnter ya se va a disparar
+        if (manager == null) return;
 
-        // Avisarle al manager que este cuadro fue tocado
+        // Avisar al manager
         manager.NotifyFrameTouched(gameObject);
+        // Debug opcional:
+        Debug.Log("FrameTrigger: tocaste " + gameObject.name);
     }
 }
