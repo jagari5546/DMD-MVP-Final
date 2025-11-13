@@ -1,102 +1,109 @@
-using System;
-using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 public class CanvasManager : MonoBehaviour
 {
-    [Header("Requirements")]
+    [Header("Panels")]
+    [SerializeField] private GameObject startPanel;
+    [SerializeField] private GameObject winPanel;
+    [SerializeField] private GameObject losePanel;
+    [SerializeField] private GameObject FirstMessagePanel;
+
+    [Header("Player (opcional)")]
     [SerializeField] private GameObject player;
-    [SerializeField] private LoseOrWinScript loseOrWin;
 
-    //[Header("Timer")]
-    //[SerializeField] private TextMeshProUGUI timerText;
-    //[SerializeField] private int gameTimeInSeconds = 300;
+    private AudioSource[] allAudioSources;
+    private bool gameEnded = false;
 
-    [Header("Events")]
-    public UnityEvent OnTimeUp;
+    private void Awake()
+    {
+        // Juego totalmente pausado al iniciar
+        Time.timeScale = 0f;
 
-    private PlayerManager playerManager;
-    private float _remaining;
-    private bool _running = false;
-    private bool _ended = false;
+        if (startPanel != null)        startPanel.SetActive(true);
+        if (FirstMessagePanel != null) FirstMessagePanel.SetActive(true);
+        if (winPanel != null)          winPanel.SetActive(false);
+        if (losePanel != null)         losePanel.SetActive(false);
+
+        if (player != null) player.SetActive(false);
+
+        // ✅ MOSTRAR CURSOR PARA PODER USAR LA UI
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
 
     private void Start()
     {
-
-        playerManager = player.GetComponent<PlayerManager>();
-        playerManager.gameObject.SetActive(false);
-
- 
-    }
-
-    private void Update()
-    {
-        if (!_running || _ended) return;
-
-        _remaining -= Time.deltaTime;
-
-        if (_remaining <= 0f)
+        // Pausar todos los audios que hayan empezado con PlayOnAwake
+        allAudioSources = FindObjectsOfType<AudioSource>();
+        foreach (var a in allAudioSources)
         {
-            _remaining = 0f;
-            //UpdateTimerText();
-
-            if (!_ended)
-            {
-                _ended = true;
-                _running = false;
-
-                OnTimeUp?.Invoke();
-
-                if (loseOrWin != null)
-                    loseOrWin.Lose();
-            }
-            return;
+            if (a != null && a.isPlaying)
+                a.Pause();
         }
-
-        //UpdateTimerText();
     }
 
-    /*private void UpdateTimerText()
-    {
-        int total = Mathf.CeilToInt(_remaining);
-        int minutes = total / 60;
-        int seconds = total % 60;
-        timerText.text = $"{minutes}:{seconds:00}";
-    }*/
-
+    // Llamar desde el botón de "Start"
     public void StartGame()
     {
-        if (_ended) return;
+        if (gameEnded) return;
+
         Time.timeScale = 1f;
-        playerManager.gameObject.SetActive(true);
-        _running = true;
+
+        if (startPanel != null)        startPanel.SetActive(false);
+        if (FirstMessagePanel != null) FirstMessagePanel.SetActive(false);
+        if (player != null)            player.SetActive(true);
+
+        // 🔒 OCULTAR CURSOR AL EMPEZAR A JUGAR
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
+        // Reactivar todos los audios que estaban pausados
+        if (allAudioSources == null || allAudioSources.Length == 0)
+            allAudioSources = FindObjectsOfType<AudioSource>();
+
+        foreach (var a in allAudioSources)
+        {
+            if (a != null)
+                a.UnPause();
+        }
     }
 
-    public void PauseGame()
+    public void Win()
     {
-        _running = false;
+        if (gameEnded) return;
+        gameEnded = true;
+
         Time.timeScale = 0f;
+
+        if (winPanel != null)  winPanel.SetActive(true);
+        if (losePanel != null) losePanel.SetActive(false);
+        if (player != null)    player.SetActive(false);
+
+        // Volvemos a mostrar el cursor en la victoria
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
-    public void ResumeGame()
+    public void Lose()
     {
-        if (_ended) return;
-        _running = true;
+        if (gameEnded) return;
+        gameEnded = true;
+
+        Time.timeScale = 0f;
+
+        if (losePanel != null) losePanel.SetActive(true);
+        if (winPanel != null)  winPanel.SetActive(false);
+        if (player != null)    player.SetActive(false);
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
+
+    public void Restart()
+    {
         Time.timeScale = 1f;
+        Scene current = SceneManager.GetActiveScene();
+        SceneManager.LoadScene(current.buildIndex);
     }
-
-    /*public void ResetTimer(int newTimeSeconds = -1)
-    {
-        if (newTimeSeconds > -1) gameTimeInSeconds = newTimeSeconds;
-
-        _remaining = Mathf.Max(0, gameTimeInSeconds);
-        _ended = false;
-        _running = false;
-
-        Time.timeScale = 0f;
-        playerManager.gameObject.SetActive(false);
-
-        UpdateTimerText();
-    }*/
 }

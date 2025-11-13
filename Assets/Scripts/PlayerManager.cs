@@ -52,8 +52,9 @@ public class PlayerManager : MonoBehaviour
         if (_disableCinemachineOnStart && _cinemachineCam != null)
             _cinemachineCam.enabled = false;
 
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        // ❌ YA NO BLOQUEAMOS EL CURSOR AQUÍ
+        // Cursor.lockState = CursorLockMode.Locked;
+        // Cursor.visible = false;
 
         _yaw = transform.eulerAngles.y;
         if (_head != null) _pitch = _head.localEulerAngles.x;
